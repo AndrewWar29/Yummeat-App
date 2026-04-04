@@ -94,21 +94,19 @@ export class YummeatStack extends cdk.Stack {
 
     // ─── Lambda Helper ───────────────────────────────────────────────────────
 
-    const backendPath = path.join(__dirname, '../../backend');
+    // El backend se compila antes del deploy en el workflow de CI
+    // El CDK empaqueta el codigo ya compilado desde backend/dist + node_modules
+    const backendDistPath = path.join(__dirname, '../../backend/dist');
+    const backendNodeModules = path.join(__dirname, '../../backend');
 
     const createLambda = (name: string, handler: string) =>
       new lambda.Function(this, name, {
         functionName: `yummeat-${name.toLowerCase()}`,
         runtime: lambda.Runtime.NODEJS_20_X,
         handler,
-        code: lambda.Code.fromAsset(backendPath, {
-          bundling: {
-            image: lambda.Runtime.NODEJS_20_X.bundlingImage,
-            command: [
-              'bash', '-c',
-              'npm ci && npx tsc && cp -r dist/* /asset-output/ && cp -r node_modules /asset-output/',
-            ],
-          },
+        code: lambda.Code.fromAsset(backendNodeModules, {
+          exclude: ['*.ts', 'tsconfig.json', '*.md'],
+          bundling: undefined,
         }),
         role: lambdaRole,
         timeout: cdk.Duration.seconds(15),
@@ -118,10 +116,10 @@ export class YummeatStack extends cdk.Stack {
 
     // ─── Auth Lambdas ─────────────────────────────────────────────────────────
 
-    const registerFn  = createLambda('Register',   'lambdas/auth/register.handler');
-    const verifyFn    = createLambda('Verify',     'lambdas/auth/verify.handler');
-    const loginFn     = createLambda('Login',      'lambdas/auth/login.handler');
-    const resendFn    = createLambda('ResendCode', 'lambdas/auth/resendCode.handler');
+    const registerFn  = createLambda('Register',   'dist/lambdas/auth/register.handler');
+    const verifyFn    = createLambda('Verify',     'dist/lambdas/auth/verify.handler');
+    const loginFn     = createLambda('Login',      'dist/lambdas/auth/login.handler');
+    const resendFn    = createLambda('ResendCode', 'dist/lambdas/auth/resendCode.handler');
 
     // ─── API Gateway ─────────────────────────────────────────────────────────
 

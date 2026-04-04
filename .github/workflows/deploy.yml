@@ -37,6 +37,10 @@ jobs:
         working-directory: backend
         run: npm ci
 
+      - name: Compile backend TypeScript
+        working-directory: backend
+        run: npx tsc
+
       - name: Install infrastructure dependencies
         working-directory: infrastructure
         run: npm ci
