@@ -11,7 +11,9 @@ interface AuthState {
   isAuthenticated: boolean;
 
   login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
+  register: (name: string, email: string, password: string) => Promise<{ email: string } | null>;
+  verifyEmail: (email: string, code: string) => Promise<void>;
+  resendCode: (email: string) => Promise<void>;
   logout: () => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
   loadStoredUser: () => Promise<void>;
@@ -34,11 +36,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   login: async (email, password) => {
     set({ isLoading: true, error: null });
     try {
-      const user = await authService.login(email, password);
+      const { user, token } = await authService.login(email, password);
+      await AsyncStorage.setItem('accessToken', token);
       await AsyncStorage.setItem('user', JSON.stringify(user));
       set({ user, isAuthenticated: true });
     } catch (e: any) {
-      set({ error: e.response?.data?.message ?? 'Error al iniciar sesión' });
+      set({ error: e.response?.data?.message ?? 'Correo o contraseña incorrectos' });
     } finally {
       set({ isLoading: false });
     }
@@ -47,11 +50,36 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   register: async (name, email, password) => {
     set({ isLoading: true, error: null });
     try {
-      const user = await authService.register(name, email, password);
+      await authService.register(name, email, password);
+      return { email: email.toLowerCase() };
+    } catch (e: any) {
+      set({ error: e.response?.data?.message ?? 'Error al registrarse' });
+      return null;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  verifyEmail: async (email, code) => {
+    set({ isLoading: true, error: null });
+    try {
+      const { user, token } = await authService.verifyEmail(email, code);
+      await AsyncStorage.setItem('accessToken', token);
       await AsyncStorage.setItem('user', JSON.stringify(user));
       set({ user, isAuthenticated: true });
     } catch (e: any) {
-      set({ error: e.response?.data?.message ?? 'Error al registrarse' });
+      set({ error: e.response?.data?.message ?? 'Código incorrecto' });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  resendCode: async (email) => {
+    set({ isLoading: true, error: null });
+    try {
+      await authService.resendCode(email);
+    } catch (e: any) {
+      set({ error: e.response?.data?.message ?? 'Error al reenviar código' });
     } finally {
       set({ isLoading: false });
     }

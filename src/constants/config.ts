@@ -1,13 +1,13 @@
 export const Config = {
   API_BASE_URL: process.env.EXPO_PUBLIC_API_BASE_URL ?? 'https://api.yummeat.app',
-  GROQ_API_KEY: process.env.EXPO_PUBLIC_GROQ_API_KEY ?? '',
-  OPENAI_API_KEY: process.env.EXPO_PUBLIC_OPENAI_API_KEY ?? '',
+  GROK_API_KEY: process.env.EXPO_PUBLIC_GROK_API_KEY ?? '',
+  GEMINI_API_KEY: process.env.EXPO_PUBLIC_GEMINI_API_KEY ?? '',
   TRIAL_DAYS: 7,
   INVITE_CODE_LENGTH: 6,
 };
 
-export const GROQ_MODEL = 'llama3-70b-8192';
-export const OPENAI_VISION_MODEL = 'gpt-4o-mini';
+export const GROK_MODEL = 'grok-4.1-fast';
+export const GEMINI_VISION_MODEL = 'gemini-2.5-flash-lite-preview-06-17';
 
 export const SYSTEM_PROMPT_RECIPE = `Actúa como un chef profesional y experto en nutrición.
 Basado en el plato indicado, genera ÚNICAMENTE un JSON válido con la siguiente estructura,

@@ -1,16 +1,16 @@
 import axios from 'axios';
 import { Recipe, ScanResult, Ingredient } from '../types';
-import { Config, GROQ_MODEL, OPENAI_VISION_MODEL, SYSTEM_PROMPT_RECIPE, SYSTEM_PROMPT_SCAN } from '../constants/config';
+import { Config, GROK_MODEL, GEMINI_VISION_MODEL, SYSTEM_PROMPT_RECIPE, SYSTEM_PROMPT_SCAN } from '../constants/config';
 import api from './api';
 
-// ─── Groq: generate recipe from dish name ────────────────────────────────────
+// ─── Grok (xAI): generate recipe from dish name ──────────────────────────────
 
 export const recipeService = {
   async generateFromName(dishName: string): Promise<Recipe> {
     const response = await axios.post(
-      'https://api.groq.com/openai/v1/chat/completions',
+      'https://api.x.ai/v1/chat/completions',
       {
-        model: GROQ_MODEL,
+        model: GROK_MODEL,
         messages: [
           { role: 'system', content: SYSTEM_PROMPT_RECIPE },
           { role: 'user', content: `Plato: ${dishName}` },
@@ -20,7 +20,7 @@ export const recipeService = {
       },
       {
         headers: {
-          Authorization: `Bearer ${Config.GROQ_API_KEY}`,
+          Authorization: `Bearer ${Config.GROK_API_KEY}`,
           'Content-Type': 'application/json',
         },
       }
@@ -31,38 +31,34 @@ export const recipeService = {
     return mapToRecipe(parsed, dishName);
   },
 
-  // ─── OpenAI Vision: scan fridge image ─────────────────────────────────────
+  // ─── Gemini 2.5 Flash Lite: scan fridge image ────────────────────────────
 
   async scanImage(imageBase64: string): Promise<ScanResult> {
     const response = await axios.post(
-      'https://api.openai.com/v1/chat/completions',
+      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_VISION_MODEL}:generateContent?key=${Config.GEMINI_API_KEY}`,
       {
-        model: OPENAI_VISION_MODEL,
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT_SCAN },
+        contents: [
           {
-            role: 'user',
-            content: [
+            parts: [
+              { text: SYSTEM_PROMPT_SCAN },
               {
-                type: 'image_url',
-                image_url: { url: `data:image/jpeg;base64,${imageBase64}` },
+                inline_data: {
+                  mime_type: 'image/jpeg',
+                  data: imageBase64,
+                },
               },
-              { type: 'text', text: 'Analiza esta imagen y devuelve el JSON solicitado.' },
+              { text: 'Analiza esta imagen y devuelve el JSON solicitado.' },
             ],
           },
         ],
-        max_tokens: 2048,
+        generationConfig: { maxOutputTokens: 2048, temperature: 0.4 },
       },
-      {
-        headers: {
-          Authorization: `Bearer ${Config.OPENAI_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-      }
+      { headers: { 'Content-Type': 'application/json' } }
     );
 
-    const raw = response.data.choices[0].message.content;
-    const parsed = JSON.parse(raw);
+    const raw = response.data.candidates[0].content.parts[0].text;
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    const parsed = JSON.parse(jsonMatch ? jsonMatch[0] : raw);
     return {
       detectedIngredients: parsed.ingredientes_detectados,
       suggestedRecipes: parsed.recetas_sugeridas.map((r: any) => mapToRecipe(r, r.nombre_receta)),

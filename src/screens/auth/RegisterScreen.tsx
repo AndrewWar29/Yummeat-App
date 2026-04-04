@@ -44,7 +44,10 @@ export function RegisterScreen({ navigation }: Props) {
       setPasswordError('Las contraseñas no coinciden.');
       return;
     }
-    await register(name.trim(), email.trim(), password);
+    const result = await register(name.trim(), email.trim(), password);
+    if (result) {
+      navigation.navigate('VerifyEmail', { email: result.email });
+    }
   };
 
   return (
