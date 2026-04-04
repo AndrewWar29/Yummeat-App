@@ -1,0 +1,36 @@
+{
+  "version": "53.0.0",
+  "files": {
+    "93eb59c56edcd1be0e97daaa90fdb3ec29ba6fbfa19b1f73b9aeae062db42f8b": {
+      "displayName": "Register/Code",
+      "source": {
+        "path": "/Users/andrewwar29/Documents/Yummeat App/backend",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "608645727487-us-east-2-1bce9c31": {
+          "bucketName": "cdk-hnb659fds-assets-608645727487-us-east-2",
+          "objectKey": "93eb59c56edcd1be0e97daaa90fdb3ec29ba6fbfa19b1f73b9aeae062db42f8b.zip",
+          "region": "us-east-2",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::608645727487:role/cdk-hnb659fds-file-publishing-role-608645727487-us-east-2"
+        }
+      }
+    },
+    "c1d8b1f41866d5cbe0b4787aac6f3bfb142454e187d41bdfbbecc991df878100": {
+      "displayName": "YummeatStack Template",
+      "source": {
+        "path": "YummeatStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "608645727487-us-east-2-28b57ac8": {
+          "bucketName": "cdk-hnb659fds-assets-608645727487-us-east-2",
+          "objectKey": "c1d8b1f41866d5cbe0b4787aac6f3bfb142454e187d41bdfbbecc991df878100.json",
+          "region": "us-east-2",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::608645727487:role/cdk-hnb659fds-file-publishing-role-608645727487-us-east-2"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

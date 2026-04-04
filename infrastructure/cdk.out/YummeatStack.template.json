@@ -1,0 +1,1581 @@
+{
+ "Resources": {
+  "UsersTable9725E9C8": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "pk",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "pk",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "yummeat-users"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/UsersTable/Resource"
+   }
+  },
+  "HouseholdsTable13E55999": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "pk",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "sk",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "inviteCode",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "GlobalSecondaryIndexes": [
+     {
+      "IndexName": "InviteCodeIndex",
+      "KeySchema": [
+       {
+        "AttributeName": "inviteCode",
+        "KeyType": "HASH"
+       }
+      ],
+      "Projection": {
+       "ProjectionType": "ALL"
+      }
+     }
+    ],
+    "KeySchema": [
+     {
+      "AttributeName": "pk",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "sk",
+      "KeyType": "RANGE"
+     }
+    ],
+    "TableName": "yummeat-households"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/HouseholdsTable/Resource"
+   }
+  },
+  "RecipesTable058A1F33": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "pk",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "pk",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "yummeat-recipes"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/RecipesTable/Resource"
+   }
+  },
+  "CalendarTable1570142F": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "pk",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "sk",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "pk",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "sk",
+      "KeyType": "RANGE"
+     }
+    ],
+    "TableName": "yummeat-calendar"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/CalendarTable/Resource"
+   }
+  },
+  "JwtSecretB8834B39": {
+   "Type": "AWS::SSM::Parameter",
+   "Properties": {
+    "Description": "JWT signing secret for Yummeat",
+    "Name": "/yummeat/jwt-secret",
+    "Type": "String",
+    "Value": "S@TJu3QwIB5z@isxj!Nel@l6S0aeHd87Bs3JVwh@Zh6PTo%O"
+   },
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/JwtSecret/Resource"
+   }
+  },
+  "LambdaRole3A44B857": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/LambdaRole/Resource"
+   }
+  },
+  "LambdaRoleDefaultPolicy75625A82": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "UsersTable9725E9C8",
+          "Arn"
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "UsersTable9725E9C8",
+          "Arn"
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "HouseholdsTable13E55999",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "HouseholdsTable13E55999",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "HouseholdsTable13E55999",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "HouseholdsTable13E55999",
+             "Arn"
+            ]
+           },
+           "/index/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "RecipesTable058A1F33",
+          "Arn"
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "RecipesTable058A1F33",
+          "Arn"
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:BatchGetItem",
+        "dynamodb:Query",
+        "dynamodb:GetItem",
+        "dynamodb:Scan",
+        "dynamodb:ConditionCheckItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "CalendarTable1570142F",
+          "Arn"
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "dynamodb:GetRecords",
+        "dynamodb:GetShardIterator"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "CalendarTable1570142F",
+          "Arn"
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "ses:SendEmail",
+        "ses:SendRawEmail"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "ssm:DescribeParameters",
+        "ssm:GetParameters",
+        "ssm:GetParameter",
+        "ssm:GetParameterHistory"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":ssm:us-east-2:608645727487:parameter",
+          {
+           "Ref": "JwtSecretB8834B39"
+          }
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "LambdaRoleDefaultPolicy75625A82",
+    "Roles": [
+     {
+      "Ref": "LambdaRole3A44B857"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/LambdaRole/DefaultPolicy/Resource"
+   }
+  },
+  "Register34FE4340": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-608645727487-us-east-2",
+     "S3Key": "93eb59c56edcd1be0e97daaa90fdb3ec29ba6fbfa19b1f73b9aeae062db42f8b.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "USERS_TABLE": {
+       "Ref": "UsersTable9725E9C8"
+      },
+      "HOUSEHOLDS_TABLE": {
+       "Ref": "HouseholdsTable13E55999"
+      },
+      "RECIPES_TABLE": {
+       "Ref": "RecipesTable058A1F33"
+      },
+      "CALENDAR_TABLE": {
+       "Ref": "CalendarTable1570142F"
+      },
+      "AWS_REGION_NAME": "us-east-2",
+      "SES_FROM_EMAIL": "no-reply@yummeat.app"
+     }
+    },
+    "FunctionName": "yummeat-register",
+    "Handler": "lambdas/auth/register.handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaRole3A44B857",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 15
+   },
+   "DependsOn": [
+    "LambdaRoleDefaultPolicy75625A82",
+    "LambdaRole3A44B857"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/Register/Resource",
+    "aws:asset:path": "/Users/andrewwar29/Documents/Yummeat App/backend",
+    "aws:asset:is-bundled": true,
+    "aws:asset:property": "Code"
+   }
+  },
+  "Verify04AA6CE7": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-608645727487-us-east-2",
+     "S3Key": "93eb59c56edcd1be0e97daaa90fdb3ec29ba6fbfa19b1f73b9aeae062db42f8b.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "USERS_TABLE": {
+       "Ref": "UsersTable9725E9C8"
+      },
+      "HOUSEHOLDS_TABLE": {
+       "Ref": "HouseholdsTable13E55999"
+      },
+      "RECIPES_TABLE": {
+       "Ref": "RecipesTable058A1F33"
+      },
+      "CALENDAR_TABLE": {
+       "Ref": "CalendarTable1570142F"
+      },
+      "AWS_REGION_NAME": "us-east-2",
+      "SES_FROM_EMAIL": "no-reply@yummeat.app"
+     }
+    },
+    "FunctionName": "yummeat-verify",
+    "Handler": "lambdas/auth/verify.handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaRole3A44B857",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 15
+   },
+   "DependsOn": [
+    "LambdaRoleDefaultPolicy75625A82",
+    "LambdaRole3A44B857"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/Verify/Resource",
+    "aws:asset:path": "/Users/andrewwar29/Documents/Yummeat App/backend",
+    "aws:asset:is-bundled": true,
+    "aws:asset:property": "Code"
+   }
+  },
+  "LoginDDE9992A": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-608645727487-us-east-2",
+     "S3Key": "93eb59c56edcd1be0e97daaa90fdb3ec29ba6fbfa19b1f73b9aeae062db42f8b.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "USERS_TABLE": {
+       "Ref": "UsersTable9725E9C8"
+      },
+      "HOUSEHOLDS_TABLE": {
+       "Ref": "HouseholdsTable13E55999"
+      },
+      "RECIPES_TABLE": {
+       "Ref": "RecipesTable058A1F33"
+      },
+      "CALENDAR_TABLE": {
+       "Ref": "CalendarTable1570142F"
+      },
+      "AWS_REGION_NAME": "us-east-2",
+      "SES_FROM_EMAIL": "no-reply@yummeat.app"
+     }
+    },
+    "FunctionName": "yummeat-login",
+    "Handler": "lambdas/auth/login.handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaRole3A44B857",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 15
+   },
+   "DependsOn": [
+    "LambdaRoleDefaultPolicy75625A82",
+    "LambdaRole3A44B857"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/Login/Resource",
+    "aws:asset:path": "/Users/andrewwar29/Documents/Yummeat App/backend",
+    "aws:asset:is-bundled": true,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ResendCode860DBA01": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-608645727487-us-east-2",
+     "S3Key": "93eb59c56edcd1be0e97daaa90fdb3ec29ba6fbfa19b1f73b9aeae062db42f8b.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "USERS_TABLE": {
+       "Ref": "UsersTable9725E9C8"
+      },
+      "HOUSEHOLDS_TABLE": {
+       "Ref": "HouseholdsTable13E55999"
+      },
+      "RECIPES_TABLE": {
+       "Ref": "RecipesTable058A1F33"
+      },
+      "CALENDAR_TABLE": {
+       "Ref": "CalendarTable1570142F"
+      },
+      "AWS_REGION_NAME": "us-east-2",
+      "SES_FROM_EMAIL": "no-reply@yummeat.app"
+     }
+    },
+    "FunctionName": "yummeat-resendcode",
+    "Handler": "lambdas/auth/resendCode.handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaRole3A44B857",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 15
+   },
+   "DependsOn": [
+    "LambdaRoleDefaultPolicy75625A82",
+    "LambdaRole3A44B857"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/ResendCode/Resource",
+    "aws:asset:path": "/Users/andrewwar29/Documents/Yummeat App/backend",
+    "aws:asset:is-bundled": true,
+    "aws:asset:property": "Code"
+   }
+  },
+  "YummeatApi06175533": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "Description": "Backend API for Yummeat App",
+    "Name": "Yummeat API"
+   },
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/YummeatApi/Resource"
+   }
+  },
+  "YummeatApiCloudWatchRoleC6E49152": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "apigateway.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+       ]
+      ]
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/YummeatApi/CloudWatchRole/Resource"
+   }
+  },
+  "YummeatApiAccountD846C4FD": {
+   "Type": "AWS::ApiGateway::Account",
+   "Properties": {
+    "CloudWatchRoleArn": {
+     "Fn::GetAtt": [
+      "YummeatApiCloudWatchRoleC6E49152",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "YummeatApi06175533"
+   ],
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/YummeatApi/Account"
+   }
+  },
+  "YummeatApiDeployment890BD42220c9a567e5712d73350572a77b618779": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "Description": "Backend API for Yummeat App",
+    "RestApiId": {
+     "Ref": "YummeatApi06175533"
+    }
+   },
+   "DependsOn": [
+    "YummeatApiauthloginOPTIONSFD91D9C9",
+    "YummeatApiauthloginPOST6A1FA02C",
+    "YummeatApiauthloginE76434E5",
+    "YummeatApiauthOPTIONS029F8947",
+    "YummeatApiauthregisterOPTIONS28702AA5",
+    "YummeatApiauthregisterPOST4EC7E4E3",
+    "YummeatApiauthregister70020B63",
+    "YummeatApiauthresendcodeOPTIONS09ACC92A",
+    "YummeatApiauthresendcodePOST1CF7BA0A",
+    "YummeatApiauthresendcode1C26F1B9",
+    "YummeatApiauth43BAB6D1",
+    "YummeatApiauthverifyOPTIONS7B3B0C1A",
+    "YummeatApiauthverifyPOSTDDE2236C",
+    "YummeatApiauthverifyCA0D2F25",
+    "YummeatApiOPTIONS84700794"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/YummeatApi/Deployment/Resource",
+    "aws:cdk:do-not-refactor": true
+   }
+  },
+  "YummeatApiDeploymentStageprodAD94B114": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "DeploymentId": {
+     "Ref": "YummeatApiDeployment890BD42220c9a567e5712d73350572a77b618779"
+    },
+    "RestApiId": {
+     "Ref": "YummeatApi06175533"
+    },
+    "StageName": "prod"
+   },
+   "DependsOn": [
+    "YummeatApiAccountD846C4FD"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/YummeatApi/DeploymentStage.prod/Resource"
+   }
+  },
+  "YummeatApiOPTIONS84700794": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "YummeatApi06175533",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "YummeatApi06175533"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/YummeatApi/Default/OPTIONS/Resource"
+   }
+  },
+  "YummeatApiauth43BAB6D1": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "YummeatApi06175533",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "auth",
+    "RestApiId": {
+     "Ref": "YummeatApi06175533"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/YummeatApi/Default/auth/Resource"
+   }
+  },
+  "YummeatApiauthOPTIONS029F8947": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "YummeatApiauth43BAB6D1"
+    },
+    "RestApiId": {
+     "Ref": "YummeatApi06175533"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/YummeatApi/Default/auth/OPTIONS/Resource"
+   }
+  },
+  "YummeatApiauthregister70020B63": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "YummeatApiauth43BAB6D1"
+    },
+    "PathPart": "register",
+    "RestApiId": {
+     "Ref": "YummeatApi06175533"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/YummeatApi/Default/auth/register/Resource"
+   }
+  },
+  "YummeatApiauthregisterOPTIONS28702AA5": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "YummeatApiauthregister70020B63"
+    },
+    "RestApiId": {
+     "Ref": "YummeatApi06175533"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/YummeatApi/Default/auth/register/OPTIONS/Resource"
+   }
+  },
+  "YummeatApiauthregisterPOSTApiPermissionYummeatStackYummeatApi4C3A86B7POSTauthregister162A717A": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "Register34FE4340",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-2:608645727487:",
+       {
+        "Ref": "YummeatApi06175533"
+       },
+       "/",
+       {
+        "Ref": "YummeatApiDeploymentStageprodAD94B114"
+       },
+       "/POST/auth/register"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/YummeatApi/Default/auth/register/POST/ApiPermission.YummeatStackYummeatApi4C3A86B7.POST..auth.register"
+   }
+  },
+  "YummeatApiauthregisterPOSTApiPermissionTestYummeatStackYummeatApi4C3A86B7POSTauthregisterC31E520E": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "Register34FE4340",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-2:608645727487:",
+       {
+        "Ref": "YummeatApi06175533"
+       },
+       "/test-invoke-stage/POST/auth/register"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/YummeatApi/Default/auth/register/POST/ApiPermission.Test.YummeatStackYummeatApi4C3A86B7.POST..auth.register"
+   }
+  },
+  "YummeatApiauthregisterPOST4EC7E4E3": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:us-east-2:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "Register34FE4340",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "YummeatApiauthregister70020B63"
+    },
+    "RestApiId": {
+     "Ref": "YummeatApi06175533"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/YummeatApi/Default/auth/register/POST/Resource"
+   }
+  },
+  "YummeatApiauthverifyCA0D2F25": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "YummeatApiauth43BAB6D1"
+    },
+    "PathPart": "verify",
+    "RestApiId": {
+     "Ref": "YummeatApi06175533"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/YummeatApi/Default/auth/verify/Resource"
+   }
+  },
+  "YummeatApiauthverifyOPTIONS7B3B0C1A": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "YummeatApiauthverifyCA0D2F25"
+    },
+    "RestApiId": {
+     "Ref": "YummeatApi06175533"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/YummeatApi/Default/auth/verify/OPTIONS/Resource"
+   }
+  },
+  "YummeatApiauthverifyPOSTApiPermissionYummeatStackYummeatApi4C3A86B7POSTauthverifyAE3B87B9": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "Verify04AA6CE7",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-2:608645727487:",
+       {
+        "Ref": "YummeatApi06175533"
+       },
+       "/",
+       {
+        "Ref": "YummeatApiDeploymentStageprodAD94B114"
+       },
+       "/POST/auth/verify"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/YummeatApi/Default/auth/verify/POST/ApiPermission.YummeatStackYummeatApi4C3A86B7.POST..auth.verify"
+   }
+  },
+  "YummeatApiauthverifyPOSTApiPermissionTestYummeatStackYummeatApi4C3A86B7POSTauthverify01FFF4E8": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "Verify04AA6CE7",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-2:608645727487:",
+       {
+        "Ref": "YummeatApi06175533"
+       },
+       "/test-invoke-stage/POST/auth/verify"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/YummeatApi/Default/auth/verify/POST/ApiPermission.Test.YummeatStackYummeatApi4C3A86B7.POST..auth.verify"
+   }
+  },
+  "YummeatApiauthverifyPOSTDDE2236C": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:us-east-2:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "Verify04AA6CE7",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "YummeatApiauthverifyCA0D2F25"
+    },
+    "RestApiId": {
+     "Ref": "YummeatApi06175533"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/YummeatApi/Default/auth/verify/POST/Resource"
+   }
+  },
+  "YummeatApiauthloginE76434E5": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "YummeatApiauth43BAB6D1"
+    },
+    "PathPart": "login",
+    "RestApiId": {
+     "Ref": "YummeatApi06175533"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/YummeatApi/Default/auth/login/Resource"
+   }
+  },
+  "YummeatApiauthloginOPTIONSFD91D9C9": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "YummeatApiauthloginE76434E5"
+    },
+    "RestApiId": {
+     "Ref": "YummeatApi06175533"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/YummeatApi/Default/auth/login/OPTIONS/Resource"
+   }
+  },
+  "YummeatApiauthloginPOSTApiPermissionYummeatStackYummeatApi4C3A86B7POSTauthlogin1AB8A7B8": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LoginDDE9992A",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-2:608645727487:",
+       {
+        "Ref": "YummeatApi06175533"
+       },
+       "/",
+       {
+        "Ref": "YummeatApiDeploymentStageprodAD94B114"
+       },
+       "/POST/auth/login"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/YummeatApi/Default/auth/login/POST/ApiPermission.YummeatStackYummeatApi4C3A86B7.POST..auth.login"
+   }
+  },
+  "YummeatApiauthloginPOSTApiPermissionTestYummeatStackYummeatApi4C3A86B7POSTauthlogin87593AB6": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LoginDDE9992A",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-2:608645727487:",
+       {
+        "Ref": "YummeatApi06175533"
+       },
+       "/test-invoke-stage/POST/auth/login"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/YummeatApi/Default/auth/login/POST/ApiPermission.Test.YummeatStackYummeatApi4C3A86B7.POST..auth.login"
+   }
+  },
+  "YummeatApiauthloginPOST6A1FA02C": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:us-east-2:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "LoginDDE9992A",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "YummeatApiauthloginE76434E5"
+    },
+    "RestApiId": {
+     "Ref": "YummeatApi06175533"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/YummeatApi/Default/auth/login/POST/Resource"
+   }
+  },
+  "YummeatApiauthresendcode1C26F1B9": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Ref": "YummeatApiauth43BAB6D1"
+    },
+    "PathPart": "resend-code",
+    "RestApiId": {
+     "Ref": "YummeatApi06175533"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/YummeatApi/Default/auth/resend-code/Resource"
+   }
+  },
+  "YummeatApiauthresendcodeOPTIONS09ACC92A": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "YummeatApiauthresendcode1C26F1B9"
+    },
+    "RestApiId": {
+     "Ref": "YummeatApi06175533"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/YummeatApi/Default/auth/resend-code/OPTIONS/Resource"
+   }
+  },
+  "YummeatApiauthresendcodePOSTApiPermissionYummeatStackYummeatApi4C3A86B7POSTauthresendcodeC3D8A6C7": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ResendCode860DBA01",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-2:608645727487:",
+       {
+        "Ref": "YummeatApi06175533"
+       },
+       "/",
+       {
+        "Ref": "YummeatApiDeploymentStageprodAD94B114"
+       },
+       "/POST/auth/resend-code"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/YummeatApi/Default/auth/resend-code/POST/ApiPermission.YummeatStackYummeatApi4C3A86B7.POST..auth.resend-code"
+   }
+  },
+  "YummeatApiauthresendcodePOSTApiPermissionTestYummeatStackYummeatApi4C3A86B7POSTauthresendcode030D19D3": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ResendCode860DBA01",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-2:608645727487:",
+       {
+        "Ref": "YummeatApi06175533"
+       },
+       "/test-invoke-stage/POST/auth/resend-code"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/YummeatApi/Default/auth/resend-code/POST/ApiPermission.Test.YummeatStackYummeatApi4C3A86B7.POST..auth.resend-code"
+   }
+  },
+  "YummeatApiauthresendcodePOST1CF7BA0A": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:us-east-2:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "ResendCode860DBA01",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "YummeatApiauthresendcode1C26F1B9"
+    },
+    "RestApiId": {
+     "Ref": "YummeatApi06175533"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/YummeatApi/Default/auth/resend-code/POST/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/01QwU7DMAz9Fu5ZQN0OXDsQt4lqcJ/c1JSsTVLFCVNV5d9x0sF28vN7L36OK1ntnuXTA1xoo7phM+pWLh8B1CCYOi3dbMG4jslPaEcUL1+2gCSITHZ6bfsGPBgM6LP83yShgS1Htz4rtXGjVnOxFZTECKbtQC5v0aqgnc3aPW7QG03EHUduT0CEgWSdC/dyH9WAYQ+EAibdQ8ALzByKFOpJl9wbrJVy0QbxitPoZoMMmb3r+ON9WXYF/NRFr7CMP2D4dl0Wr+hPvYYUnNKNLjvmQXyh7HmPYYohCes6lGd6/Kl2csunP5PWG897aYPyuNZf1dguSpcBAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "YummeatStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "YummeatApiEndpoint1F1D944F": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "YummeatApi06175533"
+      },
+      ".execute-api.us-east-2.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "YummeatApiDeploymentStageprodAD94B114"
+      },
+      "/"
+     ]
+    ]
+   }
+  },
+  "ApiUrl": {
+   "Description": "URL base de la API — copiala al .env de la app",
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "YummeatApi06175533"
+      },
+      ".execute-api.us-east-2.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "YummeatApiDeploymentStageprodAD94B114"
+      },
+      "/"
+     ]
+    ]
+   },
+   "Export": {
+    "Name": "YummeatApiUrl"
+   }
+  },
+  "UsersTableName": {
+   "Value": {
+    "Ref": "UsersTable9725E9C8"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

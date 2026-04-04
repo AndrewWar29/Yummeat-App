@@ -1,0 +1,304 @@
+{
+  "/YummeatStack/UsersTable": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "UsersTable9725E9C8"
+      }
+    }
+  ],
+  "/YummeatStack/HouseholdsTable": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "HouseholdsTable13E55999"
+      }
+    }
+  ],
+  "/YummeatStack/RecipesTable": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "RecipesTable058A1F33"
+      }
+    }
+  ],
+  "/YummeatStack/CalendarTable": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "CalendarTable1570142F"
+      }
+    }
+  ],
+  "/YummeatStack/ApiUrl": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiUrl"
+    }
+  ],
+  "/YummeatStack/UsersTableName": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "UsersTableName"
+    }
+  ],
+  "/YummeatStack/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    }
+  ],
+  "/YummeatStack/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    }
+  ],
+  "/YummeatStack/UsersTable/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "UsersTable9725E9C8"
+    }
+  ],
+  "/YummeatStack/HouseholdsTable/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "HouseholdsTable13E55999"
+    }
+  ],
+  "/YummeatStack/RecipesTable/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RecipesTable058A1F33"
+    }
+  ],
+  "/YummeatStack/CalendarTable/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CalendarTable1570142F"
+    }
+  ],
+  "/YummeatStack/JwtSecret/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "JwtSecretB8834B39"
+    }
+  ],
+  "/YummeatStack/LambdaRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaRole3A44B857"
+    }
+  ],
+  "/YummeatStack/Register/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "Register34FE4340"
+    }
+  ],
+  "/YummeatStack/Verify/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "Verify04AA6CE7"
+    }
+  ],
+  "/YummeatStack/Login/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LoginDDE9992A"
+    }
+  ],
+  "/YummeatStack/ResendCode/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ResendCode860DBA01"
+    }
+  ],
+  "/YummeatStack/YummeatApi/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApi06175533"
+    }
+  ],
+  "/YummeatStack/YummeatApi/Account": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApiAccountD846C4FD"
+    }
+  ],
+  "/YummeatStack/YummeatApi/Endpoint": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApiEndpoint1F1D944F"
+    }
+  ],
+  "/YummeatStack/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    }
+  ],
+  "/YummeatStack/LambdaRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaRoleDefaultPolicy75625A82"
+    }
+  ],
+  "/YummeatStack/YummeatApi/CloudWatchRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApiCloudWatchRoleC6E49152"
+    }
+  ],
+  "/YummeatStack/YummeatApi/Deployment/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApiDeployment890BD42220c9a567e5712d73350572a77b618779"
+    }
+  ],
+  "/YummeatStack/YummeatApi/DeploymentStage.prod/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApiDeploymentStageprodAD94B114"
+    }
+  ],
+  "/YummeatStack/YummeatApi/Default/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApiOPTIONS84700794"
+    }
+  ],
+  "/YummeatStack/YummeatApi/Default/auth/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApiauth43BAB6D1"
+    }
+  ],
+  "/YummeatStack/YummeatApi/Default/auth/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApiauthOPTIONS029F8947"
+    }
+  ],
+  "/YummeatStack/YummeatApi/Default/auth/register/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApiauthregister70020B63"
+    }
+  ],
+  "/YummeatStack/YummeatApi/Default/auth/verify/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApiauthverifyCA0D2F25"
+    }
+  ],
+  "/YummeatStack/YummeatApi/Default/auth/login/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApiauthloginE76434E5"
+    }
+  ],
+  "/YummeatStack/YummeatApi/Default/auth/resend-code/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApiauthresendcode1C26F1B9"
+    }
+  ],
+  "/YummeatStack/YummeatApi/Default/auth/register/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApiauthregisterOPTIONS28702AA5"
+    }
+  ],
+  "/YummeatStack/YummeatApi/Default/auth/register/POST/ApiPermission.YummeatStackYummeatApi4C3A86B7.POST..auth.register": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApiauthregisterPOSTApiPermissionYummeatStackYummeatApi4C3A86B7POSTauthregister162A717A"
+    }
+  ],
+  "/YummeatStack/YummeatApi/Default/auth/register/POST/ApiPermission.Test.YummeatStackYummeatApi4C3A86B7.POST..auth.register": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApiauthregisterPOSTApiPermissionTestYummeatStackYummeatApi4C3A86B7POSTauthregisterC31E520E"
+    }
+  ],
+  "/YummeatStack/YummeatApi/Default/auth/register/POST/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApiauthregisterPOST4EC7E4E3"
+    }
+  ],
+  "/YummeatStack/YummeatApi/Default/auth/verify/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApiauthverifyOPTIONS7B3B0C1A"
+    }
+  ],
+  "/YummeatStack/YummeatApi/Default/auth/verify/POST/ApiPermission.YummeatStackYummeatApi4C3A86B7.POST..auth.verify": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApiauthverifyPOSTApiPermissionYummeatStackYummeatApi4C3A86B7POSTauthverifyAE3B87B9"
+    }
+  ],
+  "/YummeatStack/YummeatApi/Default/auth/verify/POST/ApiPermission.Test.YummeatStackYummeatApi4C3A86B7.POST..auth.verify": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApiauthverifyPOSTApiPermissionTestYummeatStackYummeatApi4C3A86B7POSTauthverify01FFF4E8"
+    }
+  ],
+  "/YummeatStack/YummeatApi/Default/auth/verify/POST/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApiauthverifyPOSTDDE2236C"
+    }
+  ],
+  "/YummeatStack/YummeatApi/Default/auth/login/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApiauthloginOPTIONSFD91D9C9"
+    }
+  ],
+  "/YummeatStack/YummeatApi/Default/auth/login/POST/ApiPermission.YummeatStackYummeatApi4C3A86B7.POST..auth.login": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApiauthloginPOSTApiPermissionYummeatStackYummeatApi4C3A86B7POSTauthlogin1AB8A7B8"
+    }
+  ],
+  "/YummeatStack/YummeatApi/Default/auth/login/POST/ApiPermission.Test.YummeatStackYummeatApi4C3A86B7.POST..auth.login": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApiauthloginPOSTApiPermissionTestYummeatStackYummeatApi4C3A86B7POSTauthlogin87593AB6"
+    }
+  ],
+  "/YummeatStack/YummeatApi/Default/auth/login/POST/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApiauthloginPOST6A1FA02C"
+    }
+  ],
+  "/YummeatStack/YummeatApi/Default/auth/resend-code/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApiauthresendcodeOPTIONS09ACC92A"
+    }
+  ],
+  "/YummeatStack/YummeatApi/Default/auth/resend-code/POST/ApiPermission.YummeatStackYummeatApi4C3A86B7.POST..auth.resend-code": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApiauthresendcodePOSTApiPermissionYummeatStackYummeatApi4C3A86B7POSTauthresendcodeC3D8A6C7"
+    }
+  ],
+  "/YummeatStack/YummeatApi/Default/auth/resend-code/POST/ApiPermission.Test.YummeatStackYummeatApi4C3A86B7.POST..auth.resend-code": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApiauthresendcodePOSTApiPermissionTestYummeatStackYummeatApi4C3A86B7POSTauthresendcode030D19D3"
+    }
+  ],
+  "/YummeatStack/YummeatApi/Default/auth/resend-code/POST/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "YummeatApiauthresendcodePOST1CF7BA0A"
+    }
+  ]
+}
