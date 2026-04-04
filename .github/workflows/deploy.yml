@@ -9,6 +9,9 @@ on:
       - 'infrastructure/**'
       - '.github/workflows/deploy.yml'
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   deploy:
     name: CDK Deploy
@@ -43,15 +46,18 @@ jobs:
 
       - name: CDK Bootstrap
         working-directory: infrastructure
-        run: cdk bootstrap aws://${{ secrets.AWS_ACCOUNT_ID }}/us-east-2
+        env:
+          CDK_DEFAULT_ACCOUNT: ${{ secrets.AWS_ACCOUNT_ID }}
+        run: cdk bootstrap
 
       - name: CDK Deploy
         working-directory: infrastructure
-        run: cdk deploy --require-approval never
+        env:
+          CDK_DEFAULT_ACCOUNT: ${{ secrets.AWS_ACCOUNT_ID }}
+        run: cdk deploy --require-approval never --outputs-file outputs.json
 
       - name: Print API URL
         working-directory: infrastructure
         run: |
           echo "✅ Deploy exitoso"
-          cdk deploy --outputs-file outputs.json --require-approval never 2>/dev/null || true
-          cat outputs.json 2>/dev/null || echo "Ver la URL en AWS Console > CloudFormation > YummeatStack > Outputs"
+          cat outputs.json
