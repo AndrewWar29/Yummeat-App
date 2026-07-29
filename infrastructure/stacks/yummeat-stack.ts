@@ -121,6 +121,14 @@ export class YummeatStack extends cdk.Stack {
     const loginFn     = createLambda('Login',      'dist/lambdas/auth/login.handler');
     const resendFn    = createLambda('ResendCode', 'dist/lambdas/auth/resendCode.handler');
 
+    // ─── Household Lambdas ──────────────────────────────────────────────────────
+
+    const createHouseholdFn = createLambda('CreateHousehold', 'dist/lambdas/households/create.handler');
+    const joinHouseholdFn = createLambda('JoinHousehold', 'dist/lambdas/households/join.handler');
+    const getHouseholdFn = createLambda('GetHousehold', 'dist/lambdas/households/get.handler');
+    const removeMemberFn = createLambda('RemoveMember', 'dist/lambdas/households/removeMember.handler');
+    const regenerateInviteCodeFn = createLambda('RegenerateInviteCode', 'dist/lambdas/households/regenerateInviteCode.handler');
+
     // ─── API Gateway ─────────────────────────────────────────────────────────
 
     const api = new apigateway.RestApi(this, 'YummeatApi', {
@@ -139,6 +147,16 @@ export class YummeatStack extends cdk.Stack {
     auth.addResource('verify').addMethod('POST', new apigateway.LambdaIntegration(verifyFn));
     auth.addResource('login').addMethod('POST', new apigateway.LambdaIntegration(loginFn));
     auth.addResource('resend-code').addMethod('POST', new apigateway.LambdaIntegration(resendFn));
+
+    // /households
+    const households = api.root.addResource('households');
+    households.addMethod('POST', new apigateway.LambdaIntegration(createHouseholdFn));
+    households.addResource('join').addMethod('POST', new apigateway.LambdaIntegration(joinHouseholdFn));
+
+    const householdById = households.addResource('{id}');
+    householdById.addMethod('GET', new apigateway.LambdaIntegration(getHouseholdFn));
+    householdById.addResource('invite-code').addMethod('POST', new apigateway.LambdaIntegration(regenerateInviteCodeFn));
+    householdById.addResource('members').addResource('{userId}').addMethod('DELETE', new apigateway.LambdaIntegration(removeMemberFn));
 
     // ─── Outputs ──────────────────────────────────────────────────────────────
 

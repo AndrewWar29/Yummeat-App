@@ -38,6 +38,14 @@ export function notFound(message = 'No encontrado') {
   };
 }
 
+export function forbidden(message = 'No tienes permiso para esta acción') {
+  return {
+    statusCode: 403,
+    headers: cors(),
+    body: JSON.stringify({ message }),
+  };
+}
+
 export function serverError(message = 'Error interno del servidor') {
   return {
     statusCode: 500,
