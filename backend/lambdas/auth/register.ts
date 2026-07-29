@@ -2,7 +2,7 @@ import { APIGatewayProxyEvent } from 'aws-lambda';
 import { PutCommand, GetCommand } from '@aws-sdk/lib-dynamodb';
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 import bcrypt from 'bcryptjs';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 import { db, Tables } from '../../shared/db';
 import { ok, badRequest, serverError, optionsResponse } from '../../shared/response';
 
@@ -31,7 +31,7 @@ export const handler = async (event: APIGatewayProxyEvent) => {
       return badRequest('Ya existe una cuenta con este correo.');
     }
 
-    const userId = uuidv4();
+    const userId = randomUUID();
     const passwordHash = await bcrypt.hash(password, 10);
     const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
     const codeExpiry = new Date(Date.now() + 15 * 60 * 1000).toISOString(); // 15 min
