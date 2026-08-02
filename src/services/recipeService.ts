@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Recipe, ScanResult, Ingredient } from '../types';
-import { Config, GROK_MODEL, GEMINI_VISION_MODEL, SYSTEM_PROMPT_RECIPE, SYSTEM_PROMPT_SCAN } from '../constants/config';
+import { Config, GROK_MODEL, GROK_VISION_MODEL, SYSTEM_PROMPT_RECIPE, SYSTEM_PROMPT_SCAN } from '../constants/config';
 import api from './api';
 
 // ─── Grok (xAI): generate recipe from dish name ──────────────────────────────
@@ -31,32 +31,35 @@ export const recipeService = {
     return mapToRecipe(parsed, dishName);
   },
 
-  // ─── Gemini 2.5 Flash Lite: scan fridge image ────────────────────────────
+  // ─── Grok (xAI): scan fridge image ────────────────────────────────────────
 
   async scanImage(imageBase64: string): Promise<ScanResult> {
     const response = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_VISION_MODEL}:generateContent?key=${Config.GEMINI_API_KEY}`,
+      'https://api.x.ai/v1/chat/completions',
       {
-        contents: [
+        model: GROK_VISION_MODEL,
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT_SCAN },
           {
-            parts: [
-              { text: SYSTEM_PROMPT_SCAN },
-              {
-                inline_data: {
-                  mime_type: 'image/jpeg',
-                  data: imageBase64,
-                },
-              },
-              { text: 'Analiza esta imagen y devuelve el JSON solicitado.' },
+            role: 'user',
+            content: [
+              { type: 'text', text: 'Analiza esta imagen y devuelve el JSON solicitado.' },
+              { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${imageBase64}` } },
             ],
           },
         ],
-        generationConfig: { maxOutputTokens: 2048, temperature: 0.4 },
+        temperature: 0.4,
+        max_tokens: 2048,
       },
-      { headers: { 'Content-Type': 'application/json' } }
+      {
+        headers: {
+          Authorization: `Bearer ${Config.GROK_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+      }
     );
 
-    const raw = response.data.candidates[0].content.parts[0].text;
+    const raw = response.data.choices[0].message.content;
     const jsonMatch = raw.match(/\{[\s\S]*\}/);
     const parsed = JSON.parse(jsonMatch ? jsonMatch[0] : raw);
     return {
