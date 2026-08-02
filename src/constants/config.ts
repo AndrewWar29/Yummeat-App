@@ -6,8 +6,8 @@ export const Config = {
   INVITE_CODE_LENGTH: 6,
 };
 
-export const GROK_MODEL = 'grok-4.1-fast';
-export const GEMINI_VISION_MODEL = 'gemini-2.5-flash-lite-preview-06-17';
+export const GROK_MODEL = 'grok-4.20-0309-non-reasoning';
+export const GEMINI_VISION_MODEL = 'gemini-2.5-flash-lite';
 
 export const SYSTEM_PROMPT_RECIPE = `Actúa como un chef profesional y experto en nutrición.
 Basado en el plato indicado, genera ÚNICAMENTE un JSON válido con la siguiente estructura,
