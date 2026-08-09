@@ -31,9 +31,14 @@ export const recipeService = {
     return mapToRecipe(parsed, dishName);
   },
 
-  // ─── Grok (xAI): scan fridge image ────────────────────────────────────────
+  // ─── Grok (xAI): scan fridge images (hasta 5) ────────────────────────────
 
-  async scanImage(imageBase64: string): Promise<ScanResult> {
+  async scanImage(imagesBase64: string[]): Promise<ScanResult> {
+    const promptText =
+      imagesBase64.length > 1
+        ? `Analiza estas ${imagesBase64.length} imágenes (son fotos del mismo refrigerador/despensa) y devuelve el JSON solicitado.`
+        : 'Analiza esta imagen y devuelve el JSON solicitado.';
+
     const response = await axios.post(
       'https://api.x.ai/v1/chat/completions',
       {
@@ -43,8 +48,11 @@ export const recipeService = {
           {
             role: 'user',
             content: [
-              { type: 'text', text: 'Analiza esta imagen y devuelve el JSON solicitado.' },
-              { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${imageBase64}` } },
+              { type: 'text', text: promptText },
+              ...imagesBase64.map((imageBase64) => ({
+                type: 'image_url',
+                image_url: { url: `data:image/jpeg;base64,${imageBase64}` },
+              })),
             ],
           },
         ],

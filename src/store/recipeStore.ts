@@ -11,7 +11,7 @@ interface RecipeState {
   error: string | null;
 
   generateRecipe: (dishName: string) => Promise<Recipe | null>;
-  scanFridge: (imageBase64: string) => Promise<void>;
+  scanFridge: (imagesBase64: string[]) => Promise<void>;
   saveRecipe: (recipe: Recipe) => Promise<Recipe | null>;
   setCurrentRecipe: (recipe: Recipe | null) => void;
   clearScanResult: () => void;
@@ -40,10 +40,10 @@ export const useRecipeStore = create<RecipeState>((set, get) => ({
     }
   },
 
-  scanFridge: async (imageBase64) => {
+  scanFridge: async (imagesBase64) => {
     set({ isScanLoading: true, error: null, scanResult: null });
     try {
-      const result = await recipeService.scanImage(imageBase64);
+      const result = await recipeService.scanImage(imagesBase64);
       set({ scanResult: result });
     } catch {
       set({ error: 'Error al analizar la imagen. Intenta de nuevo.' });
