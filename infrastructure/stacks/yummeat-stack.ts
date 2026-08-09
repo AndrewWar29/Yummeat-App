@@ -129,6 +129,17 @@ export class YummeatStack extends cdk.Stack {
     const removeMemberFn = createLambda('RemoveMember', 'dist/lambdas/households/removeMember.handler');
     const regenerateInviteCodeFn = createLambda('RegenerateInviteCode', 'dist/lambdas/households/regenerateInviteCode.handler');
 
+    // ─── Recipe Lambdas ─────────────────────────────────────────────────────────
+
+    const saveRecipeFn = createLambda('SaveRecipe', 'dist/lambdas/recipes/save.handler');
+    const getRecipeFn = createLambda('GetRecipe', 'dist/lambdas/recipes/get.handler');
+
+    // ─── Calendar Lambdas ───────────────────────────────────────────────────────
+
+    const getCalendarFn = createLambda('GetCalendar', 'dist/lambdas/calendar/get.handler');
+    const createCalendarEntryFn = createLambda('CreateCalendarEntry', 'dist/lambdas/calendar/create.handler');
+    const removeCalendarEntryFn = createLambda('RemoveCalendarEntry', 'dist/lambdas/calendar/remove.handler');
+
     // ─── API Gateway ─────────────────────────────────────────────────────────
 
     const api = new apigateway.RestApi(this, 'YummeatApi', {
@@ -157,6 +168,17 @@ export class YummeatStack extends cdk.Stack {
     householdById.addMethod('GET', new apigateway.LambdaIntegration(getHouseholdFn));
     householdById.addResource('invite-code').addMethod('POST', new apigateway.LambdaIntegration(regenerateInviteCodeFn));
     householdById.addResource('members').addResource('{userId}').addMethod('DELETE', new apigateway.LambdaIntegration(removeMemberFn));
+
+    // /households/{id}/calendar
+    const householdCalendar = householdById.addResource('calendar');
+    householdCalendar.addMethod('GET', new apigateway.LambdaIntegration(getCalendarFn));
+    householdCalendar.addMethod('POST', new apigateway.LambdaIntegration(createCalendarEntryFn));
+    householdCalendar.addResource('{entryId}').addMethod('DELETE', new apigateway.LambdaIntegration(removeCalendarEntryFn));
+
+    // /recipes
+    const recipes = api.root.addResource('recipes');
+    recipes.addMethod('POST', new apigateway.LambdaIntegration(saveRecipeFn));
+    recipes.addResource('{id}').addMethod('GET', new apigateway.LambdaIntegration(getRecipeFn));
 
     // ─── Outputs ──────────────────────────────────────────────────────────────
 
