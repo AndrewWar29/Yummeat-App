@@ -2,6 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Text } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from '../constants/colors';
 import { CalendarScreen } from '../screens/calendar/CalendarScreen';
 import { RecipeSearchScreen } from '../screens/recipes/RecipeSearchScreen';
@@ -40,6 +41,8 @@ const TAB_ICONS: Record<string, string> = {
 };
 
 export function AppNavigator() {
+  const insets = useSafeAreaInsets();
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -52,8 +55,8 @@ export function AppNavigator() {
           borderTopWidth: 0,
           elevation: 8,
           shadowOpacity: 0.08,
-          height: 60,
-          paddingBottom: 8,
+          height: 60 + insets.bottom,
+          paddingBottom: 8 + insets.bottom,
         },
         headerStyle: { backgroundColor: Colors.white },
         headerTitleStyle: { fontWeight: '700', color: Colors.secondary },
